@@ -1,4 +1,4 @@
 [
 [0, {'pos': [0, 0], 'angle': 0}],
-[3, (('intake_auto_halt', True),)],
+[5, True, 'mogo'],
 ]

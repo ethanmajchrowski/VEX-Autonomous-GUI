@@ -120,6 +120,8 @@ while running:
             if event.ui_object_id == "panel.panel.scrolling_container.drop_down_menu.#drop_down_options_list":
                 if type(selected_item) == SequenceMotor:
                     selected_item.properties['motor'][2] = event.text
+                if type(selected_item) == SequenceSetPneumatic:
+                    selected_item.properties['pneumatic'][2] = event.text
 
         if event.type == UI_BUTTON_PRESSED:
             if event.ui_element == ui_manager.element.sequence_add_button:

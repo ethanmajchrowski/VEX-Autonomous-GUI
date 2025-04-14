@@ -411,6 +411,11 @@ class UIManager:
                         output.append(entry)
         self.arguments_list = output
 
+        if len(self.arguments_list) == 0:
+            self.element.arguments_add_button.hide()
+        else:
+            self.element.arguments_add_button.show()
+
     def update_custom_arguments(self):
         """
         Setup custom arguments to be modified in the arguments panel.
@@ -487,8 +492,16 @@ class UIManager:
         dictionary within the selected item.
         """
         for item in self.properties_list:
-            for component in item:
-                component.kill()
+            if type(item) == tuple:
+                for component in item:
+                    component.hide()
+                    component.kill()
+            else:
+                item.kill()
+            
+        print(self.properties_list)
+        self.properties_list = []
+
         for i, item in enumerate(self.selected_item.properties):
             data = self.selected_item.properties[item] # [obj, name, value]
             if data[0] == "list":
