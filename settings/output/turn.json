@@ -1,0 +1,11 @@
+{
+    "arguments": {
+        "direction": {
+            "default": "RIGHT",
+            "valid_types": ["RIGHT", "LEFT"]
+        }, 
+        "angle": 0, 
+        "velocity": 0,
+        "wait": true
+    }
+}

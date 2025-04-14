@@ -1,0 +1,36 @@
+{
+    "arguments": {
+            "fwd_volt": 0.0,
+            "checkpoints": {
+                "default": null,
+                "type_ref": [[], 0]
+            },
+            "backwards": false,
+            "look_ahead_dist": 350,
+            "finish_margin": 100,
+            "event_look_ahead_dist": 75,
+            "timeout": {
+                "default": null,
+                "type_ref": 0
+            },
+            "heading_authority": 2.0,
+            "max_turn_volts":  8.0,
+            "hPID_KP": 0.1,
+            "hPID_KD": 0.01,
+            "hPID_KI": 0.0,
+            "hPID_KI_MAX": 0.0,
+            "hPID_MIN_OUT": {
+                "default": null,
+                "type_ref": 0.0
+            },
+            "K_curvature_speed": 0.0,
+            "K_curvature_look_ahead": 0.0,
+            "a_curvature_exp": 0.1,
+            "max_curvature_speed": 3.0,
+            "min_look_ahead": 300,
+            "a_curvature_speed_exp": 0.1,
+            "speed_ramp_time": 1,
+            "min_start_voltage": 4.0,
+            "slowdown_distance": 0
+    }
+}

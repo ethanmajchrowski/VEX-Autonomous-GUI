@@ -1,0 +1,4 @@
+{
+    "pneumatics": ["mogo", "doinker", "doinker_left", "intake"],
+    "arguments": {}
+}

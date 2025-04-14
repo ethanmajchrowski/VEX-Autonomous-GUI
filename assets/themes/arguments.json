@@ -1,0 +1,13 @@
+{
+    "@error":
+    {
+        "colours": {
+            "normal_text": "red"
+        }
+    }, 
+    "@normal": {
+        "colours": {
+            "normal_text": "white"
+        }
+    }
+}

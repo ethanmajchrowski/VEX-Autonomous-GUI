@@ -1,0 +1,10 @@
+"filename", "language", "Python", "JSON", "comment", "blank", "total"
+"c:\Users\ethan\projects\Python\Autonomous GUI\main.py", "Python", 16, 0, -2, 3, 17
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\curves.py", "Python", 1, 0, 0, 0, 1
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\file.py", "Python", 56, 0, 1, 7, 64
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\gui.py", "Python", 25, 0, 0, 5, 30
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\sequence.py", "Python", 14, 0, -1, 2, 15
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\utils.py", "Python", 1, 0, 0, 0, 1
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\motor.json", "JSON", 0, 1, 0, 0, 1
+"c:\Users\ethan\projects\Python\Autonomous GUI\simulation\pure_pursuit.py", "Python", 8, 0, -1, 4, 11
+"Total", "-", 121, 1, -3, 21, 140

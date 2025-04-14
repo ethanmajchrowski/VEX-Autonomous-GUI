@@ -1,0 +1,14 @@
+{
+    "arguments": {
+        "direction": {
+            "default": "FORWARD"
+        },
+        "distance": 0,
+        "units": {
+            "default": "MM",
+            "valid_types": ["MM", "IN"]
+        }, 
+        "velocity": 100,
+        "wait": true
+    }
+}

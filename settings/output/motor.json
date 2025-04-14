@@ -1,0 +1,23 @@
+{
+    "motors": ["intakeChain", "intakeFlex", "ladyBrown"],
+    "arguments": {
+        "direction": {
+            "default": 1,
+            "valid_types": [1, -1],
+            "incompatible_with": ["braketype"]
+        },
+        "velocity": {
+            "default": 100,
+            "incompatible_with": ["voltage", "braketype"]
+        },
+        "voltage": {
+            "default": 12.0,
+            "incompatible_with": ["velocity", "braketype"]
+        },
+        "braketype": {
+            "default": "COAST",
+            "valid_types": ["COAST", "BRAKE", "HOLD"],
+            "incompatible_with": ["velocity", "voltage", "direction"]
+        }
+    }
+}

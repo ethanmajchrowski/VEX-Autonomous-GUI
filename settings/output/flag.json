@@ -1,0 +1,28 @@
+{
+    "arguments": {
+        "intake_halt_tolerance": 60,
+        "intake_auto_halt": false,
+        "intake_flex_auto_halt": false,
+        "drop_after_auto_halt": false,
+        "raise_after_auto_halt": false,
+        "last_intake_command": 0.0,
+        "intake_anti_jam": false,
+        "intake_auto_stop_type": {
+            "default": "BRAKE",
+            "valid_types": ["COAST", "BRAKE", "HOLD"]
+        },
+        "intake_color_kill": {
+            "default": "NONE",
+            "valid_types": ["BLUE", "RED", "NONE"]
+        },
+        "lady_brown_autostop": false,
+        "color_setting": {
+            "default": "NONE",
+            "valid_types": ["BLUE", "RED", "NONE"]
+        },
+        "allow_intake_input": true,
+        "elevating": false,
+        "wall_setpoint": 1,
+        "disable_drive": false
+    }
+}

@@ -1,0 +1,21 @@
+"filename", "language", "Python", "Markdown", "JSON", "TOML", "comment", "blank", "total"
+"c:\Users\ethan\projects\Python\Autonomous GUI\assets\themes\arguments.json", "JSON", 0, 0, 13, 0, 0, 1, 14
+"c:\Users\ethan\projects\Python\Autonomous GUI\main.py", "Python", 339, 0, 0, 0, 56, 68, 463
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\__init__.py", "Python", 0, 0, 0, 0, 0, 1, 1
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\curves.py", "Python", 124, 0, 0, 0, 12, 35, 171
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\file.py", "Python", 94, 0, 0, 0, 12, 15, 121
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\gui.py", "Python", 423, 0, 0, 0, 22, 74, 519
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\sequence.py", "Python", 83, 0, 0, 0, 6, 20, 109
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\undo.py", "Python", 67, 0, 0, 0, 7, 17, 91
+"c:\Users\ethan\projects\Python\Autonomous GUI\module\utils.py", "Python", 17, 0, 0, 0, 2, 5, 24
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\config.toml", "TOML", 0, 0, 0, 1, 0, 1, 2
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\drive.json", "JSON", 0, 0, 14, 0, 0, 1, 15
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\flag.json", "JSON", 0, 0, 28, 0, 0, 1, 29
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\motor.json", "JSON", 0, 0, 22, 0, 0, 1, 23
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\path.json", "JSON", 0, 0, 36, 0, 0, 1, 37
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\turn.json", "JSON", 0, 0, 11, 0, 0, 1, 12
+"c:\Users\ethan\projects\Python\Autonomous GUI\settings\test.py", "Python", 3, 0, 0, 0, 0, 2, 5
+"c:\Users\ethan\projects\Python\Autonomous GUI\simulation\__init__.py", "Python", 0, 0, 0, 0, 0, 1, 1
+"c:\Users\ethan\projects\Python\Autonomous GUI\simulation\pure_pursuit.py", "Python", 75, 0, 0, 0, 16, 20, 111
+"c:\Users\ethan\projects\Python\Autonomous GUI\todo.md", "Markdown", 0, 28, 0, 0, 0, 2, 30
+"Total", "-", 1225, 28, 124, 1, 133, 267, 1778

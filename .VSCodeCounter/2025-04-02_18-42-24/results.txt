@@ -1,0 +1,54 @@
+Date : 2025-04-02 18:42:24
+Directory : c:\Users\ethan\projects\Python\Autonomous GUI
+Total : 19 files,  1378 codes, 133 comments, 267 blanks, all 1778 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         11 |      1,225 |        133 |        258 |      1,616 |
+| JSON     |          6 |        124 |          0 |          6 |        130 |
+| Markdown |          1 |         28 |          0 |          2 |         30 |
+| TOML     |          1 |          1 |          0 |          1 |          2 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                       | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                          |         19 |      1,378 |        133 |        267 |      1,778 |
+| . (Files)                                                                  |          2 |        367 |         56 |         70 |        493 |
+| assets                                                                     |          1 |         13 |          0 |          1 |         14 |
+| assets\themes                                                              |          1 |         13 |          0 |          1 |         14 |
+| module                                                                     |          7 |        808 |         61 |        167 |      1,036 |
+| settings                                                                   |          7 |        115 |          0 |          8 |        123 |
+| settings (Files)                                                           |          2 |          4 |          0 |          3 |          7 |
+| settings\output                                                            |          5 |        111 |          0 |          5 |        116 |
+| simulation                                                                 |          2 |         75 |         16 |         21 |        112 |
++----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                   | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\ethan\projects\Python\Autonomous GUI\assets\themes\arguments.json | JSON     |         13 |          0 |          1 |         14 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\main.py                      | Python   |        339 |         56 |         68 |        463 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\__init__.py           | Python   |          0 |          0 |          1 |          1 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\curves.py             | Python   |        124 |         12 |         35 |        171 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\file.py               | Python   |         94 |         12 |         15 |        121 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\gui.py                | Python   |        423 |         22 |         74 |        519 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\sequence.py           | Python   |         83 |          6 |         20 |        109 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\undo.py               | Python   |         67 |          7 |         17 |         91 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\module\utils.py              | Python   |         17 |          2 |          5 |         24 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\config.toml         | TOML     |          1 |          0 |          1 |          2 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\drive.json   | JSON     |         14 |          0 |          1 |         15 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\flag.json    | JSON     |         28 |          0 |          1 |         29 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\motor.json   | JSON     |         22 |          0 |          1 |         23 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\path.json    | JSON     |         36 |          0 |          1 |         37 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\output\turn.json    | JSON     |         11 |          0 |          1 |         12 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\settings\test.py             | Python   |          3 |          0 |          2 |          5 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\simulation\__init__.py       | Python   |          0 |          0 |          1 |          1 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\simulation\pure_pursuit.py   | Python   |         75 |         16 |         20 |        111 |
+| c:\Users\ethan\projects\Python\Autonomous GUI\todo.md                      | Markdown |         28 |          0 |          2 |         30 |
+| Total                                                                      |          |      1,378 |        133 |        267 |      1,778 |
++----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
