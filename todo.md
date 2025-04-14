@@ -15,7 +15,7 @@
     - [x] incompatible_with - other arguments that are exclusive with this one (list of strings)
     - [x] valid_types - list of values that are accepted for this argument
 - [ ] Path Events
-  - [ ] When selecting a path, there should be an option that appears in the bottom right to manage events
+  - [x] When selecting a path, there should be an option that appears in the bottom right to manage events
   - [ ] Events should be handled in their own GUI with a:
     - [ ] scrollable list of events
     - [ ] button to edit a specific event

@@ -49,7 +49,7 @@ class FileHandler:
             elif isinstance(function, SequenceFlag):
                 args = []
                 for item in function.custom_args:
-                    args.append(item, function.custom_args['value'][1])
+                    args.append((item, function.custom_args[item]['value'][1]))
                 item = [
                     FileHandler.ID.FLAG,
                     args
