@@ -53,6 +53,10 @@ hovering_on_point = False
 map_interaction = True
 drag_start_offset = offset
 
+###!!!!!!!!!!
+# ui_manager.toggle_events_dialogue()
+# map_interaction = False
+
 while running:
     display_surface.fill((40, 40, 40))
     screen_mouse = pg.mouse.get_pos()
@@ -186,7 +190,40 @@ while running:
                         item = sequence.pop(ind)
                         sequence.insert(ind+1, item)
                         ui_manager.refresh_sequence(sequence)
-        
+            if event.ui_element == ui_manager.element.path_events_button:
+                ui_manager.toggle_events_dialogue()
+                map_interaction = False
+            
+            if event.ui_object_id == "panel.panel.scrolling_container.button":
+                for i, item in enumerate(ui_manager.events_list):
+                    if event.ui_element in item:
+                        path_event = selected_item.events[i]
+
+                        if event.ui_element.text == "C":
+                            ui_manager.selected_config = i
+                            # this is the event that we hit the config button on
+                            ui_manager.panel.event_config_popup.show()
+                            ui_manager.panel.event_config_popup.change_layer((ui_manager.panel.path_events_dialogue.get_top_layer()+1))
+
+                            ui_manager.update_event_config(i)
+                            layer = ui_manager.panel.event_config_popup.get_top_layer()
+                            ui_manager.element.event_config_close_button.change_layer(layer+1)
+                            
+                        if event.ui_element.text == "X":
+                            selected_item.events.pop(i)
+                            ui_manager.update_events_list()
+            
+            if event.ui_element == ui_manager.element.event_config_close_button:
+                ui_manager.panel.event_config_popup.hide()
+            
+            if event.ui_element == ui_manager.element.path_events_add_variable_event_button:
+                selected_item.events.append({'type': 'variable', 'name': '', 'value': 2.0})
+                ui_manager.update_events_list()
+
+            if event.ui_element == ui_manager.element.path_events_add_function_event_button:
+                selected_item.events.append({'type': 'function', 'name': 'spin', 'args': [100, 'PERCENT']})
+                ui_manager.update_events_list()
+
         # changed argument
         if event.type == UI_TEXT_ENTRY_CHANGED:
             for row in ui_manager.arguments_UI_list:
@@ -264,6 +301,25 @@ while running:
                                 except ValueError:
                                     # invalid input
                                     event.ui_element.change_object_id(ObjectID(class_id="@error"))
+            
+            for i, row in enumerate(ui_manager.event_config):
+                if event.ui_element in [*row]:
+                    event_dict = selected_item.events[ui_manager.selected_config]
+                    key = (list(event_dict.keys())[i+1]) #i+1 to account for type at index 0
+
+                    try:
+                        new_val = type(event_dict[key])(event.text)
+
+                        if type(event_dict[key]) == tuple or type(data[0]) == list:
+                            new_val = [data[0][1](item) for item in value.split(" ")]
+                        else:
+                            new_val = type(event_dict[key])(event.text)
+                        
+                        selected_item.events[ui_manager.selected_config][key] = new_val
+                        event.ui_element.change_object_id(ObjectID(class_id="@normal"))
+                    except ValueError:
+                        event.ui_element.change_object_id(ObjectID(class_id="@error"))
+                    print(selected_item.events[ui_manager.selected_config][key])
         
         if event.type == QUIT:
             running = False
@@ -351,6 +407,11 @@ while running:
                         if ui_manager.showing_arguments_dialogue:
                             if not ui_manager.panel.arguments_dialogue.get_abs_rect().collidepoint(screen_mouse):
                                 ui_manager.toggle_argument_dialogue()
+                                map_interaction = True
+
+                        if ui_manager.showing_events_dialogue:
+                            if not ui_manager.panel.path_events_dialogue.get_abs_rect().collidepoint(screen_mouse):
+                                ui_manager.toggle_events_dialogue()
                                 map_interaction = True
 
         if event.type == VIDEORESIZE:
@@ -473,7 +534,7 @@ while running:
     if ui_manager.rect.CENTER_PANEL_RECT.collidepoint(screen_mouse) and not dragging_map:
         ui_manager.update_pos(mouse_pos)
 
-    # pg.draw.rect(display_surface, (255, 0, 0), ui_manager.panel.arguments_scroll.get_abs_rect())
+    # pg.draw.rect(display_surface, (255, 0, 0), ui_manager.element.event_config_close_button.get_abs_rect())
 
     pg.display.update()
 

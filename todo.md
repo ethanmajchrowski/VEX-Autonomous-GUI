@@ -15,19 +15,17 @@
     - [x] incompatible_with - other arguments that are exclusive with this one (list of strings)
     - [x] valid_types - list of values that are accepted for this argument
 - [ ] Path Events
-  - [x] When selecting a path, there should be an option that appears in the bottom right to manage events
-  - [ ] Events should be handled in their own GUI with a:
-    - [ ] scrollable list of events
-    - [ ] button to edit a specific event
-      - [ ] editing an event can change:
-        - [ ] function (probably store in JSON?)
-        - [ ] function arguments
-        - [ ] EITHER:
-          - [ ] Time after start of path to trigger event
-                OR
-          - [ ] Click and drag event point in path (maybe always have events draggable when selecting a path?)
-    - [ ] button to add new event
-    - [ ] button to remove event
+  - [ ] Define a .JSOn format for events
+  - [ ] When adding a new event, pick from a list of types (add motor event, add pneumatic event, etc.)
+        <!-- We do this instead of trying to generalize things like "function(*args)" because that's too complex for the GUI. -->
+    - [ ] each type has an associated JSON that tells the event menu what types and arguments we have for each event
+  - [ ] we can edit the properties of an event just like the properties of a sequence function or custom arguments
+    - [ ] all properties of an event are visible always to minimize complexity & GUI work
+    Event types:
+      - Motor spin
+      - Motor stop
+      - Pneumatic set
+      - Change flag
 *WANT TO DO*
 - [ ] Robot simulation with timing
 - [ ] Robot simulation path results

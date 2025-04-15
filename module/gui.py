@@ -1,6 +1,7 @@
 import pygame as pg
 import pygame_gui
 import pygame_gui.elements.ui_button
+import pygame_gui.elements.ui_label
 from module.sequence import SequenceType, sequence_types, SequencePath
 
 # Alignment	Anchors
@@ -29,6 +30,7 @@ class UIManager:
 
         self.showing_add_dialogue = False
         self.showing_arguments_dialogue = False
+        self.showing_events_dialogue = False
         self.open_dialogue = False
         self.showing_toolbar_dropdown = False
 
@@ -36,6 +38,10 @@ class UIManager:
         self.arguments_UI_list = []
         self.arguments_list = []
         self.properties_list = []
+
+        self.events_list = []
+        self.event_config = []
+        self.selected_config: None | int = None
 
         w, h = screen_size
         left_width = int(w * 0.25)
@@ -113,19 +119,24 @@ class UIManager:
             file_dropdown.hide()
 
             path_events_dialogue = pygame_gui.elements.UIPanel(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, 300, 400),
+                relative_rect=pg.Rect(0, 0, 0.99*self.rect.CENTER_PANEL_RECT.w, 0.99*self.rect.CENTER_PANEL_RECT.h),
                 container=center_panel,
                 anchors={"center": "center"})
             path_events_dialogue.show()
 
             path_events_scroll = pygame_gui.elements.UIScrollingContainer(manager=self.manager,
-                relative_rect=pg.Rect(0, 50, 
-                    right_panel.get_relative_rect().w-10, right_panel.get_relative_rect().h-150-15-55-100),
+                relative_rect=pg.Rect(0, 30, 
+                    path_events_dialogue.get_relative_rect().w-10, right_panel.get_relative_rect().h-150-15-55-100),
                 container=path_events_dialogue,
                 anchors={"left": "left", "right": "right"},
                 allow_scroll_x=False,
                 should_grow_automatically=True)
             path_events_dialogue.hide()
+
+            event_config_popup = pygame_gui.elements.UIPanel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, (2/3)*self.rect.CENTER_PANEL_RECT.w, (2/3)*self.rect.CENTER_PANEL_RECT.h),
+                container=center_panel,
+                anchors={"center": "center"})
             
         self.panel = panel
 
@@ -160,6 +171,12 @@ class UIManager:
                 relative_rect=pg.Rect(0, 0, -1, -1),
                 anchors={"centerx": "centerx", "top": "top"},
                 text="Add non-default argument")
+
+            events_dialogue_title = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, -1, -1),
+                text="Manage path events",
+                anchors={"centerx": "centerx", "top": "top"},
+                container=self.panel.path_events_dialogue)
             
             arguments_UI_list = []
         
@@ -269,6 +286,21 @@ class UIManager:
                 anchors={"bottom": "bottom", "centerx": "centerx"},
             )
             path_events_button.hide()
+
+            path_events_add_function_event_button = pygame_gui.elements.UIButton(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, 20, 20),
+                text="F",
+                container=self.panel.path_events_dialogue)
+            
+            path_events_add_variable_event_button = pygame_gui.elements.UIButton(manager=self.manager,
+                relative_rect=pg.Rect(22, 0, 20, 20),
+                text="V",
+                container=self.panel.path_events_dialogue)
+
+            event_config_close_button = pygame_gui.elements.UIButton(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, 20, 20),
+                text="<",
+                container=self.panel.event_config_popup)
         
         self.element = element
 
@@ -494,12 +526,10 @@ class UIManager:
         for item in self.properties_list:
             if type(item) == tuple:
                 for component in item:
-                    component.hide()
                     component.kill()
             else:
                 item.kill()
             
-        print(self.properties_list)
         self.properties_list = []
 
         for i, item in enumerate(self.selected_item.properties):
@@ -539,6 +569,129 @@ class UIManager:
                     text_box.set_allowed_characters(["-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."])
                 self.properties_list.append((label, text_box))
 
+    def toggle_events_dialogue(self):
+        self.open_dialogue = not self.showing_events_dialogue
+
+        if self.showing_events_dialogue:
+            self.panel.path_events_dialogue.hide()
+            self.showing_events_dialogue = False
+        else:
+            self.panel.path_events_dialogue.show()
+            self.showing_events_dialogue = True
+        
+        self.update_events_list()
+    
+    def update_events_list(self):
+        if type(self.selected_item) == SequencePath and self.showing_events_dialogue:
+            for item in self.events_list:
+                for component in item: component.kill()
+            self.events_list = []
+            
+            for i, item in enumerate(self.selected_item.events):
+                del_button = pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect=pg.Rect(0, i*30, 20, 20),
+                    text="X",
+                    container=self.panel.path_events_scroll)
+                name = pygame_gui.elements.UILabel(manager=self.manager,
+                    relative_rect=pg.Rect(22, i*30, -1, 20),
+                    text=f"{item["name"]}",
+                    container=self.panel.path_events_scroll)
+                event_pos_button = pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect=pg.Rect(self.panel.path_events_scroll.get_relative_rect().w-40, i*30, 20, 20),
+                    text="P",
+                    container=self.panel.path_events_scroll)
+                event_config_button = pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect=pg.Rect(self.panel.path_events_scroll.get_relative_rect().w-40-25, i*30, 20, 20),
+                    text="C",
+                    container=self.panel.path_events_scroll)
+                self.events_list.append((del_button, name, event_pos_button, event_config_button))
+
+    def update_event_config(self, i):
+        event = self.selected_item.events[i]
+        for item in self.event_config:
+            item[0].kill()
+            item[1].kill()
+        self.event_config = []
+
+        # draw out info in event
+        layer = self.panel.event_config_popup.get_top_layer() + 1
+        if event['type'] == 'variable':
+            name_label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 20, -1, -1),
+                container=self.panel.event_config_popup,
+                text="name: ")
+            name_label.change_layer(layer)
+
+            name_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, 20, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": name_label},
+                initial_text=event['name'],
+                container=self.panel.event_config_popup)
+            name_text_box.change_layer(layer)
+
+            value_label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, -1, -1),
+                container=self.panel.event_config_popup,
+                text="value: ",
+                anchors={"top_target": name_label})
+            value_label.change_layer(layer)
+
+            value_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": name_label, "top_target": name_label},
+                initial_text=str(event['value']),
+                container=self.panel.event_config_popup)
+            value_text_box.change_layer(layer)
+
+            self.event_config.append((name_label, name_text_box))
+            self.event_config.append((value_label, value_text_box))
+
+        elif event['type'] == 'function':
+            name_label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 20, -1, -1),
+                container=self.panel.event_config_popup,
+                text="name: ")
+            name_label.change_layer(layer)
+
+            name_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, 20, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": name_label},
+                initial_text=event['name'],
+                container=self.panel.event_config_popup)
+            name_text_box.change_layer(layer)
+
+            args_label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, -1, -1),
+                container=self.panel.event_config_popup,
+                text="args: ",
+                anchors={"top_target": name_label})
+            args_label.change_layer(layer)
+
+            args_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": name_label, "top_target": name_label},
+                initial_text=str(event['args']),
+                container=self.panel.event_config_popup)
+            args_text_box.change_layer(layer)
+
+            object_label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, -1, -1),
+                container=self.panel.event_config_popup,
+                text="object: ",
+                anchors={"top_target": args_label})
+            object_label.change_layer(layer)
+
+            object_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": object_label, "top_target": args_label},
+                initial_text=str(event['obj']),
+                container=self.panel.event_config_popup)
+            object_text_box.change_layer(layer)
+
+            self.event_config.append((name_label, name_text_box))
+            self.event_config.append((args_label, args_text_box))
+            self.event_config.append((object_label, object_text_box))
+
     def rescale(self, new_size: tuple[int, int]):
         """
         Rescales UI (if window is scaled).
@@ -570,6 +723,11 @@ class UIManager:
         self.element.sequence_add_button.set_dimensions((left_width//4, 40))
         self.element.sequence_remove_button.set_dimensions((left_width//4, 40))
         self.element.arguments_add_button.set_dimensions((self.rect.RIGHT_PANEL_RECT.w, 30))
+
+        w, h = (2/3)*self.rect.CENTER_PANEL_RECT.w, (2/3)*self.rect.CENTER_PANEL_RECT.h
+        self.panel.path_events_dialogue.set_dimensions((w, h))
+        self.panel.path_events_scroll.set_dimensions((w-12, h-40))
+        self.update_events_list()
 
         self.changed_selection(self.selected_item)
 
