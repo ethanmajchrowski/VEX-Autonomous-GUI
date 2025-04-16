@@ -145,8 +145,8 @@ class SequenceCuston(SequenceType):
         self.symbol = "MISC"
         self.format = {"arguments": {}}
 
-        self.ID = 0
-        self.properties['ID'] = ["value", self, "ID", 0]
+        self.ID =""
+        self.properties['ID'] = ["value", self, "ID", ""]
 
 sequence_types =   ["Path",       
 "Motor",       
