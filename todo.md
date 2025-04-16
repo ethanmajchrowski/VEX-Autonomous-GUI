@@ -15,3 +15,4 @@
 - [ ] Robot simulation with timing
 - [ ] Robot simulation path results
 - [ ] more undo functionality
+- [ ] fix paths to be done correctly such that we can run as .exe
