@@ -107,12 +107,15 @@ def handle_file_export():
 
 def _handle_file_open():
     global sequence
-    sequence = file_manager.load()
-    ui_manager.refresh_sequence(sequence)
-    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
-    ui_manager.panel.file_dropdown.hide()
-    global unsaved
-    unsaved = False
+    new_sq = file_manager.load()
+    if new_sq is not None:
+        sequence = new_sq
+        ui_manager.refresh_sequence(sequence)
+        pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+        ui_manager.panel.file_dropdown.hide()
+        global unsaved
+        unsaved = False
+        
 handle_file_open = lambda: confirm_unsaved_changes(_handle_file_open)
 
 def _handle_file_new():
