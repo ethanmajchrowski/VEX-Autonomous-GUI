@@ -1,0 +1,13 @@
+{
+    "arguments": {
+        "motor": {
+            "default": "",
+            "valid_types": ["intakeChain", "intakeFlex", "ladyBrown"]
+        },
+        "velocity": 0,
+        "direction": {
+            "default": 0,
+            "valid_types": [-1, 1]
+        }
+    }
+}

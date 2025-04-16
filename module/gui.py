@@ -137,6 +137,11 @@ class UIManager:
                 relative_rect=pg.Rect(0, 0, (2/3)*self.rect.CENTER_PANEL_RECT.w, (2/3)*self.rect.CENTER_PANEL_RECT.h),
                 container=center_panel,
                 anchors={"center": "center"})
+
+            event_add_popup = pygame_gui.elements.UIPanel(manager=self.manager,
+                relative_rect=pg.Rect(0, 0, (1/3)*self.rect.CENTER_PANEL_RECT.w, (1/3)*self.rect.CENTER_PANEL_RECT.h),
+                container=center_panel,
+                anchors={"center": "center"})
             
         self.panel = panel
 
@@ -287,20 +292,34 @@ class UIManager:
             )
             path_events_button.hide()
 
-            path_events_add_function_event_button = pygame_gui.elements.UIButton(manager=self.manager,
+            path_events_add_button = pygame_gui.elements.UIButton(manager=self.manager,
                 relative_rect=pg.Rect(0, 0, 20, 20),
-                text="F",
-                container=self.panel.path_events_dialogue)
-            
-            path_events_add_variable_event_button = pygame_gui.elements.UIButton(manager=self.manager,
-                relative_rect=pg.Rect(22, 0, 20, 20),
-                text="V",
+                text="+",
                 container=self.panel.path_events_dialogue)
 
             event_config_close_button = pygame_gui.elements.UIButton(manager=self.manager,
                 relative_rect=pg.Rect(0, 0, 20, 20),
                 text="<",
                 container=self.panel.event_config_popup)
+
+            addable_events = {
+                "motor_spin.json": pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect = pg.Rect(0, 0, self.panel.event_add_popup.get_relative_rect().w-10, 30),
+                    text="motor_spin",
+                    container=self.panel.event_add_popup),
+                "motor_stop.json": pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect = pg.Rect(0, 32, self.panel.event_add_popup.get_relative_rect().w-10, 30),
+                    text="motor_stop",
+                    container=self.panel.event_add_popup),
+                "set_flag.json": pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect = pg.Rect(0, 62, self.panel.event_add_popup.get_relative_rect().w-10, 30),
+                    text="set_flag",
+                    container=self.panel.event_add_popup),
+                "set_pneumatic.json": pygame_gui.elements.UIButton(manager=self.manager,
+                    relative_rect = pg.Rect(0, 92, self.panel.event_add_popup.get_relative_rect().w-10, 30),
+                    text="set_pneumatic",
+                    container=self.panel.event_add_popup),
+            }
         
         self.element = element
 
@@ -574,6 +593,8 @@ class UIManager:
 
         if self.showing_events_dialogue:
             self.panel.path_events_dialogue.hide()
+            self.panel.event_add_popup.hide()
+            self.panel.event_config_popup.hide()
             self.showing_events_dialogue = False
         else:
             self.panel.path_events_dialogue.show()
@@ -609,88 +630,37 @@ class UIManager:
     def update_event_config(self, i):
         event = self.selected_item.events[i]
         for item in self.event_config:
-            item[0].kill()
             item[1].kill()
+            item[2].kill()
         self.event_config = []
 
         # draw out info in event
         layer = self.panel.event_config_popup.get_top_layer() + 1
-        if event['type'] == 'variable':
-            name_label = pygame_gui.elements.UILabel(manager=self.manager,
-                relative_rect=pg.Rect(0, 20, -1, -1),
+
+        for n, item in enumerate(event['data']['arguments']):
+            label = pygame_gui.elements.UILabel(manager=self.manager,
+                relative_rect=pg.Rect(0, (n*20)+20, -1, -1),
                 container=self.panel.event_config_popup,
-                text="name: ")
-            name_label.change_layer(layer)
+                text=f"{item}: ")
+            label.change_layer(layer)
 
-            name_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
-                relative_rect=pg.Rect(0, 20, self.panel.event_config_popup.get_abs_rect().w-20, 20),
-                anchors={"left_target": name_label},
-                initial_text=event['name'],
+            default_text = event['data']['arguments'][item]
+            if type(default_text) == dict:
+                if 'valid_types' in default_text:
+                    label.set_tooltip(str(default_text['valid_types']))
+                
+                default_text = str(default_text['default'])
+            
+            else: default_text = str(default_text)
+
+            text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
+                relative_rect=pg.Rect(0, (n*20)+20, self.panel.event_config_popup.get_abs_rect().w-20, 20),
+                anchors={"left_target": label},
+                initial_text=default_text,
                 container=self.panel.event_config_popup)
-            name_text_box.change_layer(layer)
+            text_box.change_layer(layer)
 
-            value_label = pygame_gui.elements.UILabel(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, -1, -1),
-                container=self.panel.event_config_popup,
-                text="value: ",
-                anchors={"top_target": name_label})
-            value_label.change_layer(layer)
-
-            value_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
-                anchors={"left_target": name_label, "top_target": name_label},
-                initial_text=str(event['value']),
-                container=self.panel.event_config_popup)
-            value_text_box.change_layer(layer)
-
-            self.event_config.append((name_label, name_text_box))
-            self.event_config.append((value_label, value_text_box))
-
-        elif event['type'] == 'function':
-            name_label = pygame_gui.elements.UILabel(manager=self.manager,
-                relative_rect=pg.Rect(0, 20, -1, -1),
-                container=self.panel.event_config_popup,
-                text="name: ")
-            name_label.change_layer(layer)
-
-            name_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
-                relative_rect=pg.Rect(0, 20, self.panel.event_config_popup.get_abs_rect().w-20, 20),
-                anchors={"left_target": name_label},
-                initial_text=event['name'],
-                container=self.panel.event_config_popup)
-            name_text_box.change_layer(layer)
-
-            args_label = pygame_gui.elements.UILabel(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, -1, -1),
-                container=self.panel.event_config_popup,
-                text="args: ",
-                anchors={"top_target": name_label})
-            args_label.change_layer(layer)
-
-            args_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
-                anchors={"left_target": name_label, "top_target": name_label},
-                initial_text=str(event['args']),
-                container=self.panel.event_config_popup)
-            args_text_box.change_layer(layer)
-
-            object_label = pygame_gui.elements.UILabel(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, -1, -1),
-                container=self.panel.event_config_popup,
-                text="object: ",
-                anchors={"top_target": args_label})
-            object_label.change_layer(layer)
-
-            object_text_box = pygame_gui.elements.UITextEntryLine(manager=self.manager,
-                relative_rect=pg.Rect(0, 0, self.panel.event_config_popup.get_abs_rect().w-20, 20),
-                anchors={"left_target": object_label, "top_target": args_label},
-                initial_text=str(event['obj']),
-                container=self.panel.event_config_popup)
-            object_text_box.change_layer(layer)
-
-            self.event_config.append((name_label, name_text_box))
-            self.event_config.append((args_label, args_text_box))
-            self.event_config.append((object_label, object_text_box))
+            self.event_config.append((item, label, text_box))
 
     def rescale(self, new_size: tuple[int, int]):
         """

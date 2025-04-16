@@ -16,6 +16,7 @@ from math import dist, sin, cos, radians
 from copy import deepcopy
 from pyperclip import copy
 from sys import exit
+from json import load
 
 pg.init()
 pg.font.init()
@@ -52,6 +53,8 @@ selected_point = None
 hovering_on_point = False
 map_interaction = True
 drag_start_offset = offset
+dragging_event = False
+hovering_on_event = False
 
 ###!!!!!!!!!!
 # ui_manager.toggle_events_dialogue()
@@ -212,17 +215,28 @@ while running:
                         if event.ui_element.text == "X":
                             selected_item.events.pop(i)
                             ui_manager.update_events_list()
+                        
+                        if event.ui_element.text == "P":
+                            print("set event position")
             
             if event.ui_element == ui_manager.element.event_config_close_button:
                 ui_manager.panel.event_config_popup.hide()
             
-            if event.ui_element == ui_manager.element.path_events_add_variable_event_button:
-                selected_item.events.append({'type': 'variable', 'name': '', 'value': 2.0})
+            if event.ui_element == ui_manager.element.path_events_add_button:
+                add_panel_is_visible = ui_manager.panel.event_add_popup._get_visible()
+                if not add_panel_is_visible:
+                    ui_manager.panel.event_add_popup.show()
+                    ui_manager.panel.event_add_popup.change_layer(ui_manager.panel.event_add_popup.get_top_layer()+1)
+                    for item in ui_manager.element.addable_events.values():
+                        item.change_layer(item.get_top_layer()+2)
+                
+            if event.ui_element in ui_manager.element.addable_events.values():
+                for key in ui_manager.element.addable_events:
+                    if ui_manager.element.addable_events[key] == event.ui_element:
+                        with open(rf"settings\events\{key}") as f:
+                            selected_item.events.append({"name": key[:-5], "data": load(f), "pos": [0, 0]})
                 ui_manager.update_events_list()
-
-            if event.ui_element == ui_manager.element.path_events_add_function_event_button:
-                selected_item.events.append({'type': 'function', 'name': 'spin', 'args': [100, 'PERCENT']})
-                ui_manager.update_events_list()
+                ui_manager.panel.event_add_popup.hide()
 
         # changed argument
         if event.type == UI_TEXT_ENTRY_CHANGED:
@@ -305,21 +319,34 @@ while running:
             for i, row in enumerate(ui_manager.event_config):
                 if event.ui_element in [*row]:
                     event_dict = selected_item.events[ui_manager.selected_config]
-                    key = (list(event_dict.keys())[i+1]) #i+1 to account for type at index 0
+                    key = (list(event_dict['data']['arguments'].keys())[i])
 
                     try:
-                        new_val = type(event_dict[key])(event.text)
+                        if type(event_dict['data']['arguments'][key]) == dict:
+                            new_val = type(event_dict['data']['arguments'][key]['default'])(event.text)
 
-                        if type(event_dict[key]) == tuple or type(data[0]) == list:
-                            new_val = [data[0][1](item) for item in value.split(" ")]
+                            if "valid_types" in event_dict['data']['arguments'][key]:
+                                if new_val not in event_dict['data']['arguments'][key]['valid_types']:
+                                    raise ValueError
+                            
+                        elif type(event_dict['data']['arguments'][key]) == bool:
+                            if event.text == "True":
+                                new_val = True
+                            elif event.text == "False":
+                                new_val = False
+                            else:
+                                raise ValueError
                         else:
-                            new_val = type(event_dict[key])(event.text)
+                            new_val = type(event_dict['data']['arguments'][key])(event.text)
                         
-                        selected_item.events[ui_manager.selected_config][key] = new_val
+                        if type(selected_item.events[ui_manager.selected_config]['data']['arguments'][key]) == dict:
+                            selected_item.events[ui_manager.selected_config]['data']['arguments'][key]['default'] = new_val
+                        else:
+                            selected_item.events[ui_manager.selected_config]['data']['arguments'][key] = new_val
+                        
                         event.ui_element.change_object_id(ObjectID(class_id="@normal"))
                     except ValueError:
                         event.ui_element.change_object_id(ObjectID(class_id="@error"))
-                    print(selected_item.events[ui_manager.selected_config][key])
         
         if event.type == QUIT:
             running = False
@@ -374,6 +401,8 @@ while running:
                         new_pos = selected_curve.control_points[selected_point[0]][selected_point[1]]
                         if undo_manager.history[-1].pos_before == new_pos:
                             undo_manager.history.pop()
+                elif dragging_event:
+                    dragging_event = False
                 elif type(selected_item) == SequencePath:
                     if not hovering_on_point and map_interaction:
                         # if we are clicking on the map panel
@@ -392,7 +421,7 @@ while running:
                         # ui_manager.element.sequence_list.show()
                         ui_manager.showing_toolbar_dropdown = False
                 else:
-                    if not dragging_map and not hovering_on_point and map_interaction and not ui_manager.open_dialogue:
+                    if not dragging_map and not hovering_on_point and map_interaction and not ui_manager.open_dialogue and not hovering_on_event:
                         if ui_manager.rect.CENTER_PANEL_RECT.collidepoint(screen_mouse):
                             dragging_map = True
                             drag_start_offset = offset
@@ -461,6 +490,14 @@ while running:
             selected_curve.next_curve.move_control(0, new_pos)
 
         selected_curve.parent.update_all_curves()
+
+    if dragging_event:
+        x, y = screen_mouse
+        sel = selected_point
+
+        new_pos = screen_to_world([x, y], zoom, offset)
+        new_pos = [int(new_pos[0]), int(new_pos[1])]
+        selected_item.events[i]['pos'] = new_pos
         
     if dragging_map:
         offset_x += rel_x
@@ -512,6 +549,19 @@ while running:
                                         selected_curve = curve
 
                                         undo_manager.add_event(undo.point.PointMove(undo_manager, control_point, overlap_index, selected_curve, selected_point))
+
+                    if not dragging_event and not hovering_on_point:
+                        hovering_on_event = False
+                        for i, point in enumerate([event['pos'] for event in item.events]):
+                            if dist(screen_mouse, world_to_screen(point, zoom, offset)) < 10:
+                                hovering_on_event = True
+                                if just_pressed[0]:
+                                    dragging_event = True
+                                    selected_event = i
+
+                for event in item.events:
+                    pg.draw.circle(display_surface, (0, 255, 0), world_to_screen(event['pos'], zoom, offset), 5)
+
             # draw checkpoints
             if 'checkpoints' in item.custom_args:
                 if type(item.custom_args['checkpoints']['value'][1]) == list:

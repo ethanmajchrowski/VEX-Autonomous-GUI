@@ -1,0 +1,12 @@
+{
+    "arguments": {
+        "motor": {
+            "default": "",
+            "valid_types": ["intakeChain", "intakeFlex", "ladyBrown"]
+        },
+        "braketype": {
+            "default": "",
+            "valid_types": ["COAST", "HOLD", "BRAKE"]
+        }
+    }
+}

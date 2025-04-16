@@ -149,8 +149,32 @@ class FileHandler:
                 if function.custom_args['fwd_volt']['value'][1] == 0.0:
                     print(f"Export WARN: Path has forward speed of 0.0 volts (Sequence index {i})")
                     error = True
+                # format events for export
+                events = []
+                for event in function.events:
+                    args = {}
+                    if event['name'] == 'set_flag':
+                        # with flags we don't want to export the arg if it is the same as the default flag, so only if we have changed something
+                        #! this could interfere if the default in the set_flag.json file is the same as what we want to set it to
+                        # but i'm too lazy to fix rn, and if we export all the flags it makes events really big *shrug*
+                        with open(rf"settings\events\{event['name']}.json") as f:
+                            reference_data = load(f)
+                        
+                        # check each argument in the event
+                        for arg in event['data']['arguments']:
+                            # see if it is different then the same argument in the reference file
+                            if event['data']['arguments'][arg] != reference_data['arguments'][arg]:
+                                args[arg] = event['data']['arguments'][arg]
+                    else:
+                        args = event['data']['arguments']
+
+                    for arg in args:
+                        if type(args[arg]) == dict:
+                            args[arg] = args[arg]['default']
+                    events.append((event['name'], args, event['pos']))
+                    
                 item = [FileHandler.ID.PATH, 
-                        None, # events
+                        events,
                         tuple([(item, function.custom_args[item]['value'][1]) for item in function.custom_args
                                if not function.custom_args[item]['value'][1] == function.format['arguments'][item]['value'][1]]), 
                         function.curve.get_points()]

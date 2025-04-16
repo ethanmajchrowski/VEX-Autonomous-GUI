@@ -1,0 +1,9 @@
+{
+    "arguments": {
+        "pneumatic": {
+            "default": "",
+            "valid_types": ["mogo", "doinker", "doinker_left", "intake"]
+        },
+        "state": false
+    }
+}

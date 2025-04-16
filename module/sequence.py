@@ -79,7 +79,7 @@ class SequencePath(SequenceType):
 
         self.properties["point_spacing"] = ["value", self.curve, "spacing", spacing]
         self.custom_args["fwd_volt"] = deepcopy(self.format["arguments"]["fwd_volt"])
-        self.events = [{'type': 'variable', 'name': 'fwd_speed', 'value': 2.0}, {'type': 'function', 'name': 'spin', 'args': [100, 'PERCENT'], 'obj': 'motor.intakeChain'}]
+        self.events = []
 
 class SequenceMotor(SequenceType):
     def __init__(self, name: str = "Motor"):
