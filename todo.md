@@ -7,6 +7,7 @@
 - [x] 6 When selecting a motor object then a pneumatic object the pneumatic dropdown is not properly hidden
   - [x] ![alt text](image.png)
 - [ ] turnFor and driveFor are probably completely broekn
+- [ ] removing item from sequence does not update displayed list
 *TODO*
 - [x] finish saving and loading
 - [x] when opening program try to open last edited file

@@ -139,5 +139,29 @@ class SequenceSetPneumatic(SequenceType):
         self.properties["state"] = ["value", self, "state", False]
         self.properties["pneumatic"] = ["list", self.format['pneumatics'], None]
 
-sequence_types =   ["Path",       "Motor",       "Flag",       "TurnFor",       "DriveFor",       "WaitFor",        "SetPneumatic"]
-sequence_classes = [SequencePath, SequenceMotor, SequenceFlag, SequenceTurnFor, SequenceDriveFor, SequenceSleepFor, SequenceSetPneumatic]
+class SequenceCuston(SequenceType):
+    def __init__(self, name = "Custom"):
+        super().__init__(name)
+        self.symbol = "MISC"
+        self.format = {"arguments": {}}
+
+        self.ID = 0
+        self.properties['ID'] = ["value", self, "ID", 0]
+
+sequence_types =   ["Path",       
+"Motor",       
+"Flag",       
+"TurnFor",       
+"DriveFor",       
+"WaitFor",        
+"SetPneumatic",
+"Custom"]
+
+sequence_classes = [SequencePath, 
+SequenceMotor, 
+SequenceFlag, 
+SequenceTurnFor, 
+SequenceDriveFor, 
+SequenceSleepFor, 
+SequenceSetPneumatic,
+SequenceCuston]

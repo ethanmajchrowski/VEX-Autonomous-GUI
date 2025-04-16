@@ -12,6 +12,7 @@ class FileHandler:
         FLAG = 3
         WAIT = 4
         PNEU = 5
+        CUSTOM = 6
     
     def __init__(self):
         self.file_path: None | str
@@ -183,6 +184,11 @@ class FileHandler:
                         function.state,
                         function.properties['pneumatic'][2]
                     ]
+            elif isinstance(function, SequenceCuston):
+                item = [
+                    FileHandler.ID.CUSTOM,
+                    function.ID
+                ]
             else:
                 item = None
 
@@ -215,7 +221,11 @@ class FileHandler:
             self.file_path = filepath
             self.base_name = os.path.basename(self.file_path)
             with open(filepath, 'rb') as f:
-                return pickle.load(f)
+                try:
+                    return pickle.load(f)
+                except AttributeError:
+                    print("Couldn't find attribute. This likely means that the file is outdated and has old code.")
+                    return None
         else:
             print(f"File not found: {filepath}")
             return None
