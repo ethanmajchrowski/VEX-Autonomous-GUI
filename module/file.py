@@ -198,7 +198,7 @@ class FileHandler:
         if not error:
             print("No export errors detected!")
 
-        fp = self.file_path.strip(".autopath") + ".txt"
+        fp = self.file_path[:-9] + ".txt"
         with open(fp, 'w') as f:
             # f.write(str(output).replace(" ", ""))
             f.write("[\n")
