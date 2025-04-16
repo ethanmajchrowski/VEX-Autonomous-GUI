@@ -8,9 +8,10 @@
   - [x] ![alt text](image.png)
 - [ ] turnFor and driveFor are probably completely broekn
 *TODO*
-- [ ] finish saving and loading
-- [ ] when opening program try to open last edited file
-- [ ] file --> new resets sequence and filepath
+- [x] finish saving and loading
+- [x] when opening program try to open last edited file
+- [x] file --> new resets sequence and filepath
 *WANT TO DO*
 - [ ] Robot simulation with timing
 - [ ] Robot simulation path results
+- [ ] more undo functionality
