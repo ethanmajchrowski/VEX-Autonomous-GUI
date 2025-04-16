@@ -1,6 +1,7 @@
 from module.curves import ComplexCurve, Curve
 from sys import getsizeof
 from module.sequence import *
+from copy import deepcopy
 
 class UndoEvent:
     def __init__(self):
@@ -88,3 +89,18 @@ class curve:
         
         def restore(self):
             self.sequence.pop(self.function)
+
+class sequence:
+    class SequenceModify(UndoEvent):
+        def __init__(self, sequence: list[SequenceType], ui_manager):
+            super().__init__()
+            """
+            Move sequence items back after a change.
+            """
+            self.sequence = sequence
+            self.old_sequence = deepcopy(self.sequence)
+            self.ui_manager = ui_manager
+        
+        def restore(self):
+            self.sequence = self.old_sequence
+            self.ui_manager.refresh_sequence(self.sequence)

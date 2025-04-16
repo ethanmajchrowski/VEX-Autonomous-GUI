@@ -515,6 +515,7 @@ while running:
                             if drag_start_offset == offset:
                                 # add a curve to the selected curve
                                 selected_item.curve.add_curve(mouse_pos)
+                                undo_manager.add_event(undo.point.PointAdd(selected_item.curve))
                                 # ui_manager.refresh_sequence(sequence)
             
         if event.type == MOUSEBUTTONDOWN:
@@ -687,8 +688,6 @@ while running:
 
     if ui_manager.rect.CENTER_PANEL_RECT.collidepoint(screen_mouse) and not dragging_map:
         ui_manager.update_pos(mouse_pos)
-
-    # pg.draw.rect(display_surface, (255, 0, 0), ui_manager.element.event_config_close_button.get_abs_rect())
 
     if unsaved:
         cap = pg.display.get_caption()[0]
