@@ -231,6 +231,7 @@ while running:
                     ui_manager.element.sequence_list.remove_items([selected_item.properties["name"]])
                     selected_item = None
                     ui_manager.changed_selection(selected_item)
+                    ui_manager.refresh_sequence(sequence)
                     unsaved = True
             elif event.ui_element == ui_manager.element.arguments_add_button:
                 ui_manager.toggle_argument_dialogue()
