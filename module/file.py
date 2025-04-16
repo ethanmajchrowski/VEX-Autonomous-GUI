@@ -1,6 +1,8 @@
 from module.sequence import *
+from json import dump
 from tkinter import filedialog
 import os
+import pickle
 
 class FileHandler:
     class ID:
@@ -13,7 +15,10 @@ class FileHandler:
     
     def __init__(self):
         self.file_path: None | str = None
-        self.file_path = "C:/Users/ethan/projects/Python/Autonomous GUI/save_testing/main.autopath"
+        with open(r"persistent.json") as f:
+            self.file_path = load(f)['last_edited_path']
+        self.base_name = os.path.basename(self.file_path)
+
         self.save_data = []
 
     def save_as(self, sequence: list[SequenceType]):
@@ -21,6 +26,7 @@ class FileHandler:
         if self.file_path == '':
             self.file_path = None
         else:
+            self.base_name = os.path.basename(self.file_path)
             self.save(sequence)
     
     def save(self, sequence: list[SequenceType]):
@@ -32,49 +38,17 @@ class FileHandler:
         if self.file_path is None:
             return
         
-        with open(self.file_path, 'w') as f:
-            f.write(str(self.save_lossless(sequence)))
+        with open(self.file_path, 'wb') as f:
+            pickle.dump(sequence, f)
 
         print(f"Saved {self.file_path}: {os.path.getsize(self.file_path)}b")
 
-    def save_lossless(self, sequence: list[SequenceType]) -> list:
-        """
-        Export needed data to restore work in the future.
-        """
-        output = []
-        item = []
-        for function in sequence:
-            if isinstance(function, SequenceDriveFor):
-                pass
-            elif isinstance(function, SequenceFlag):
-                args = []
-                for item in function.custom_args:
-                    args.append((item, function.custom_args[item]['value'][1]))
-                item = [
-                    FileHandler.ID.FLAG,
-                    args
-                ]
-            elif isinstance(function, SequenceMotor):
-                pass
-            elif isinstance(function, SequencePath):
-                item = [FileHandler.ID.PATH, 
-                        None, # events
-                        function.custom_args, 
-                        [curve.control_points for curve in function.curve.curves], 
-                        function.curve.overlap_points,
-                        function.curve.spacing]
-            elif isinstance(function, SequenceTurnFor):
-                pass
-            elif isinstance(function, SequenceInitialPose):
-                item = [
-                    FileHandler.ID.POSE,
-                    [function.x, function.y],
-                    function.a
-                ]
-
-            output.append(item)
+        with open(r"persistent.json") as f:
+            l = load(f)
         
-        return output
+        with open(r"persistent.json", 'w') as f:
+            l["last_edited_path"] = self.file_path
+            dump(l, f, indent=1)
 
     # Handle exporting and importing data files
     def export_lossy(self, sequence: list[SequenceType]) -> list:
@@ -228,7 +202,14 @@ class FileHandler:
 
         return output
 
-    def load(self, filepath: str) -> list[SequenceType]:
+    def load(self, filepath: str | None = None) -> list[SequenceType]:
         """
         Load data from a .autopath file into a sequence list. 
         """
+        if filepath is None:
+            filepath = filedialog.askopenfilename(filetypes=[("Autopath files", "*.autopath")])
+
+        print(f"Loaded {filepath}")
+        self.base_name = os.path.basename(self.file_path)
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)

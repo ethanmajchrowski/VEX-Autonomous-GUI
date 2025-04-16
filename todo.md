@@ -10,6 +10,7 @@
 *TODO*
 - [ ] finish saving and loading
 - [ ] when opening program try to open last edited file
+- [ ] file --> new resets sequence and filepath
 *WANT TO DO*
 - [ ] Robot simulation with timing
 - [ ] Robot simulation path results

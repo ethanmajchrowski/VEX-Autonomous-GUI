@@ -18,7 +18,15 @@ from pyperclip import copy
 from sys import exit
 from json import load
 
+# import for system dialogues
+import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.withdraw()
+
 pg.init()
+pg.display.set_caption("loading")
 pg.font.init()
 SCREEN_SIZE = (900, 600)
 display_surface = pg.display.set_mode(SCREEN_SIZE, flags=RESIZABLE)
@@ -37,10 +45,10 @@ file_manager = FileHandler()
 simulator = PurePursuitSimulation()
 
 clock = pg.time.Clock()
-sequence: list[SequenceType] = []
+sequence: list[SequenceType] = file_manager.load(file_manager.file_path)
+pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+ui_manager.refresh_sequence(sequence)
 
-sequence.append(SequenceInitialPose())
-ui_manager.element.sequence_list.add_items([f"[{sequence[0].symbol}] {sequence[0].properties["name"]}"])
 selected_item: None | SequenceType = None
 
 num_curves = 0
@@ -55,10 +63,69 @@ map_interaction = True
 drag_start_offset = offset
 dragging_event = False
 hovering_on_event = False
+unsaved = False
 
 ###!!!!!!!!!!
 # ui_manager.toggle_events_dialogue()
 # map_interaction = False
+
+def confirm_unsaved_changes(action):
+    if not unsaved:
+        action()
+        return
+
+    response = messagebox.askyesnocancel(
+        "Unsaved Changes",
+        "You have unsaved changes. Save before continuing?"
+    )
+    
+    if response is True:
+        handle_file_save()
+        action()
+    elif response is False:
+        action()
+    else:
+        # Cancel: don't do anything
+        pass
+
+def handle_file_save():
+    file_manager.save(sequence)
+    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+    hide_dropdown()
+
+def handle_file_save_as():
+    file_manager.save_as(sequence)
+    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+    hide_dropdown()
+
+def handle_file_export():
+    print("\n", "*"*50)
+    out = str(file_manager.export_lossy(sequence)).replace(" ", "")
+    copy(out)
+    print(f"Copied {len(out)} chars to clipboard!")
+    hide_dropdown()
+
+def _handle_file_open():
+    global sequence
+    sequence = file_manager.load()
+    ui_manager.refresh_sequence(sequence)
+    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+    ui_manager.panel.file_dropdown.hide()
+handle_file_open = lambda: confirm_unsaved_changes(_handle_file_open)
+
+def _handle_file_new():
+    global sequence
+    sequence = [SequenceInitialPose()]
+    ui_manager.element.sequence_list.add_items([f"[{sequence[0].symbol}] {sequence[0].properties['name']}"])
+    ui_manager.refresh_sequence(sequence)
+    file_manager.file_path = None
+    pg.display.set_caption("*AGUI | Editing new path")
+    ui_manager.panel.file_dropdown.hide()
+handle_file_new = lambda: confirm_unsaved_changes(_handle_file_new)
+
+def hide_dropdown():
+    ui_manager.showing_toolbar_dropdown = False
+    ui_manager.panel.file_dropdown.hide()
 
 while running:
     display_surface.fill((40, 40, 40))
@@ -111,6 +178,7 @@ while running:
                 
                 sequence.append(function)
                 ui_manager.add_sequence_item(function)
+                unsaved = True
             
             # add argument
             if event.ui_element == ui_manager.element.add_argument_dialogue_options:
@@ -122,6 +190,7 @@ while running:
                     selected_item.custom_args[arg] = deepcopy(selected_item.format["arguments"][arg])
                     ui_manager.update_arguments()
                     ui_manager.update_custom_arguments()
+                    unsaved = True
             
             # change properties dropdown
             if event.ui_object_id == "panel.panel.scrolling_container.drop_down_menu.#drop_down_options_list":
@@ -129,6 +198,7 @@ while running:
                     selected_item.properties['motor'][2] = event.text
                 if type(selected_item) == SequenceSetPneumatic:
                     selected_item.properties['pneumatic'][2] = event.text
+                unsaved = True
 
         if event.type == UI_BUTTON_PRESSED:
             if event.ui_element == ui_manager.element.sequence_add_button:
@@ -141,6 +211,7 @@ while running:
                     ui_manager.element.sequence_list.remove_items([selected_item.properties["name"]])
                     selected_item = None
                     ui_manager.changed_selection(selected_item)
+                    unsaved = True
             elif event.ui_element == ui_manager.element.arguments_add_button:
                 ui_manager.toggle_argument_dialogue()
                 map_interaction = False
@@ -151,6 +222,7 @@ while running:
                         selected_item.custom_args.pop(item[0].text.split(" ")[1])
                         ui_manager.update_custom_arguments()
                         ui_manager.update_arguments()
+                        unsaved = True
             elif event.ui_element == ui_manager.element.file_dropdown:
                 ui_manager.showing_toolbar_dropdown = not ui_manager.showing_toolbar_dropdown
 
@@ -162,22 +234,19 @@ while running:
                     ui_manager.panel.file_dropdown.hide()
                     # ui_manager.element.sequence_list.show()
             elif event.ui_element == ui_manager.element.file_save:
-                file_manager.save(sequence)
-                ui_manager.showing_toolbar_dropdown = False
-                ui_manager.panel.file_dropdown.hide()
+                handle_file_save()
 
             elif event.ui_element == ui_manager.element.file_save_as:
-                file_manager.save_as(sequence)
-                ui_manager.showing_toolbar_dropdown = False
-                ui_manager.panel.file_dropdown.hide()
+                handle_file_save_as()
 
             elif event.ui_element == ui_manager.element.file_export:
-                print("\n", "*"*50)
-                out = str(file_manager.export_lossy(sequence)).replace(" ", "")
-                copy(out)
-                print(f"Copied {len(out)} chars to clipboard!")
-                ui_manager.showing_toolbar_dropdown = False
-                ui_manager.panel.file_dropdown.hide()
+                handle_file_export()
+            
+            elif event.ui_element == ui_manager.element.file_open:
+                handle_file_open()
+            
+            elif event.ui_element == ui_manager.element.file_new:
+                handle_file_new()
             
             if event.ui_element == ui_manager.element.sequence_move_up_button:
                 if selected_item is not None:
@@ -186,6 +255,7 @@ while running:
                         item = sequence.pop(ind)
                         sequence.insert(ind-1, item)
                         ui_manager.refresh_sequence(sequence)
+                        unsaved = True
             if event.ui_element == ui_manager.element.sequence_move_down_button:
                 if selected_item is not None and type(selected_item) != SequenceInitialPose:
                     ind = sequence.index(selected_item)
@@ -193,6 +263,7 @@ while running:
                         item = sequence.pop(ind)
                         sequence.insert(ind+1, item)
                         ui_manager.refresh_sequence(sequence)
+                        unsaved = True
             if event.ui_element == ui_manager.element.path_events_button:
                 ui_manager.toggle_events_dialogue()
                 map_interaction = False
@@ -216,8 +287,7 @@ while running:
                             selected_item.events.pop(i)
                             ui_manager.update_events_list()
                         
-                        if event.ui_element.text == "P":
-                            print("set event position")
+                        unsaved = True
             
             if event.ui_element == ui_manager.element.event_config_close_button:
                 ui_manager.panel.event_config_popup.hide()
@@ -235,6 +305,7 @@ while running:
                     if ui_manager.element.addable_events[key] == event.ui_element:
                         with open(rf"settings\events\{key}") as f:
                             selected_item.events.append({"name": key[:-5], "data": load(f), "pos": [0, 0]})
+                            unsaved = True
                 ui_manager.update_events_list()
                 ui_manager.panel.event_add_popup.hide()
 
@@ -272,6 +343,7 @@ while running:
                         # set custom argument in selected item
                         selected_item.custom_args[argument]["value"][1] = converted
                         event.ui_element.change_object_id(ObjectID(class_id="@normal"))
+                        unsaved = True
                     except ValueError:
                         event.ui_element.change_object_id(ObjectID(class_id="@error"))
 
@@ -312,6 +384,7 @@ while running:
                                             raise ValueError
                                         
                                         data[1].update_all_curves()
+                                    unsaved = True
                                 except ValueError:
                                     # invalid input
                                     event.ui_element.change_object_id(ObjectID(class_id="@error"))
@@ -345,11 +418,24 @@ while running:
                             selected_item.events[ui_manager.selected_config]['data']['arguments'][key] = new_val
                         
                         event.ui_element.change_object_id(ObjectID(class_id="@normal"))
+                        unsaved = True
                     except ValueError:
                         event.ui_element.change_object_id(ObjectID(class_id="@error"))
         
         if event.type == QUIT:
-            running = False
+            if unsaved:
+                response = messagebox.askyesnocancel(
+                    "Unsaved Changes",
+                    "You have unsaved changes. Save before quitting?"
+                )
+                if response is True:
+                    handle_file_save()
+                elif response is False:
+                    running = False
+                else:
+                    pass
+            else:
+                running = False
         if event.type == KEYDOWN:
             # undo
             if event.key == K_z and mods & KMOD_CTRL:
@@ -357,14 +443,15 @@ while running:
             
             # file management
             if event.key == K_s and mods & KMOD_CTRL and not mods & KMOD_SHIFT:
-                file_manager.save(sequence)
+                handle_file_save()
             if event.key == K_s and mods & KMOD_CTRL and mods & KMOD_SHIFT:
-                file_manager.save_as(sequence)
+                handle_file_save_as()
             if event.key == K_e and mods & KMOD_CTRL:
-                print("\n", "*"*50)
-                out = str(file_manager.export_lossy(sequence)).replace(" ", "")
-                copy(out)
-                print(f"Copied {len(out)} chars to clipboard!")
+                handle_file_export()
+            if event.key == K_o and mods & KMOD_CTRL:
+                handle_file_open()
+            if event.key == K_n and mods & KMOD_CTRL:
+                handle_file_new()
 
             # sequence
             if mods & KMOD_ALT:
@@ -585,6 +672,11 @@ while running:
         ui_manager.update_pos(mouse_pos)
 
     # pg.draw.rect(display_surface, (255, 0, 0), ui_manager.element.event_config_close_button.get_abs_rect())
+
+    if unsaved:
+        cap = pg.display.get_caption()[0]
+        if "*" not in cap:
+            pg.display.set_caption("*" + cap)
 
     pg.display.update()
 
