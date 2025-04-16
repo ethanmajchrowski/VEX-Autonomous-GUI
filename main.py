@@ -30,6 +30,7 @@ pg.display.set_caption("loading")
 pg.font.init()
 SCREEN_SIZE = (900, 600)
 display_surface = pg.display.set_mode(SCREEN_SIZE, flags=RESIZABLE)
+pg.display.set_icon(pg.image.load(r"assets\graphics\icon.png").convert_alpha())
 font = pg.font.Font(r"assets\font\Inter\static\Inter_18pt-Regular.ttf")
 background = pg.image.load(r"assets\graphics\match.png").convert()
 bg_width, bg_height = background.get_size()
@@ -45,9 +46,6 @@ file_manager = FileHandler()
 simulator = PurePursuitSimulation()
 
 clock = pg.time.Clock()
-sequence: list[SequenceType] = file_manager.load(file_manager.file_path)
-pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
-ui_manager.refresh_sequence(sequence)
 
 selected_item: None | SequenceType = None
 
@@ -64,10 +62,6 @@ drag_start_offset = offset
 dragging_event = False
 hovering_on_event = False
 unsaved = False
-
-###!!!!!!!!!!
-# ui_manager.toggle_events_dialogue()
-# map_interaction = False
 
 def confirm_unsaved_changes(action):
     if not unsaved:
@@ -136,6 +130,15 @@ handle_file_new = lambda: confirm_unsaved_changes(_handle_file_new)
 def hide_dropdown():
     ui_manager.showing_toolbar_dropdown = False
     ui_manager.panel.file_dropdown.hide()
+
+sequence: list[SequenceType] = []
+sequence = file_manager.load_most_recent()
+if sequence is None:
+    handle_file_new()
+
+if file_manager.path_exists:
+    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
+ui_manager.refresh_sequence(sequence)
 
 while running:
     display_surface.fill((40, 40, 40))
@@ -440,6 +443,7 @@ while running:
                 )
                 if response is True:
                     handle_file_save()
+                    running = False
                 elif response is False:
                     running = False
                 else:

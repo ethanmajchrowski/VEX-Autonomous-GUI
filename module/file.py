@@ -14,9 +14,11 @@ class FileHandler:
         PNEU = 5
     
     def __init__(self):
-        self.file_path: None | str = None
+        self.file_path: None | str
         with open(r"persistent.json") as f:
             self.file_path = load(f)['last_edited_path']
+        
+        self.path_exists = os.path.exists(self.file_path)
         self.base_name = os.path.basename(self.file_path)
 
         self.save_data = []
@@ -50,7 +52,6 @@ class FileHandler:
             l["last_edited_path"] = self.file_path
             dump(l, f, indent=1)
 
-    # Handle exporting and importing data files
     def export_lossy(self, sequence: list[SequenceType]) -> list:
         """
         Exports to list that can be put on a robot. Gets path points, functions & custom arguments, etc.
@@ -202,14 +203,27 @@ class FileHandler:
 
         return output
 
-    def load(self, filepath: str | None = None) -> list[SequenceType]:
+    def load(self, filepath: str | None = None) -> list[SequenceType] | None:
         """
         Load data from a .autopath file into a sequence list. 
         """
         if filepath is None:
             filepath = filedialog.askopenfilename(filetypes=[("Autopath files", "*.autopath")])
 
-        print(f"Loaded {filepath}")
+        if os.path.exists(filepath):
+            print(f"Loaded {filepath}")
+            self.file_path = filepath
+            self.base_name = os.path.basename(self.file_path)
+            with open(filepath, 'rb') as f:
+                return pickle.load(f)
+        else:
+            print(f"File not found: {filepath}")
+            return None
+    
+    def load_most_recent(self):
+        with open(r"persistent.json") as f:
+            self.file_path = load(f)['last_edited_path']
+        self.path_exists = os.path.exists(self.file_path)
         self.base_name = os.path.basename(self.file_path)
-        with open(filepath, 'rb') as f:
-            return pickle.load(f)
+
+        return self.load(self.file_path)
