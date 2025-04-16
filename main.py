@@ -102,6 +102,7 @@ def handle_file_export():
     copy(out)
     print(f"Copied {len(out)} chars to clipboard!")
     hide_dropdown()
+    pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
     global unsaved
     unsaved = False
 
@@ -171,11 +172,13 @@ while running:
             # selected somehting in the sequence list
             if event.ui_element == ui_manager.element.sequence_list:
                 # for each item in the sequence list
-                for item in ui_manager.element.sequence_list.item_list:
+                for i, item in enumerate(ui_manager.element.sequence_list.item_list):
                     # if this item is selected
+                    # print(i)
                     if item['selected']:
-                        for function in sequence:
-                            if f"[{function.symbol}] {function.properties["name"]}" == item["text"]:
+                        for n, function in enumerate(sequence):
+                            # print(ui_manager.element.sequence_list.item_list)
+                            if n == i:
                                 selected_item = function
                                 # stop looking for other items
                                 break
@@ -211,6 +214,7 @@ while running:
             # change properties dropdown
             if event.ui_object_id == "panel.panel.scrolling_container.drop_down_menu.#drop_down_options_list":
                 if type(selected_item) == SequenceMotor:
+                    print(sequence.index(selected_item))
                     selected_item.properties['motor'][2] = event.text
                 if type(selected_item) == SequenceSetPneumatic:
                     selected_item.properties['pneumatic'][2] = event.text

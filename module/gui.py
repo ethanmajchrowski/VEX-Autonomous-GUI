@@ -555,12 +555,16 @@ class UIManager:
             data = self.selected_item.properties[item] # [obj, name, value]
             if data[0] == "list":
                 # list item, show a small panel with scrollable options
+                if data[2] == None:
+                    option = "Select option"
+                else: option = data[2]
+                
                 dropdown = pygame_gui.elements.UIDropDownMenu(
                     manager=self.manager,
                     relative_rect=pg.Rect(0, (i*20)+10, self.panel.arguments_scroll.get_relative_rect().w-10, 30),
                     container=self.panel.properties_scroll,
                     options_list=["Select option", *data[1]],
-                    starting_option="Select option")
+                    starting_option=option)
                 self.properties_list.append(dropdown)
             if data[0] == "value" or (item == "name" and not self.selected_item.properties['name'] == "InitialPose"):
                 text = f"{type(data[3]).__name__} {item}"
