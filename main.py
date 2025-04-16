@@ -92,11 +92,15 @@ def handle_file_save():
     file_manager.save(sequence)
     pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
     hide_dropdown()
+    global unsaved
+    unsaved = False
 
 def handle_file_save_as():
     file_manager.save_as(sequence)
     pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
     hide_dropdown()
+    global unsaved
+    unsaved = False
 
 def handle_file_export():
     print("\n", "*"*50)
@@ -104,6 +108,8 @@ def handle_file_export():
     copy(out)
     print(f"Copied {len(out)} chars to clipboard!")
     hide_dropdown()
+    global unsaved
+    unsaved = False
 
 def _handle_file_open():
     global sequence
@@ -111,6 +117,8 @@ def _handle_file_open():
     ui_manager.refresh_sequence(sequence)
     pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
     ui_manager.panel.file_dropdown.hide()
+    global unsaved
+    unsaved = False
 handle_file_open = lambda: confirm_unsaved_changes(_handle_file_open)
 
 def _handle_file_new():
@@ -121,6 +129,8 @@ def _handle_file_new():
     file_manager.file_path = None
     pg.display.set_caption("*AGUI | Editing new path")
     ui_manager.panel.file_dropdown.hide()
+    global unsaved
+    unsaved = False
 handle_file_new = lambda: confirm_unsaved_changes(_handle_file_new)
 
 def hide_dropdown():
