@@ -23,6 +23,10 @@ from json import load
 import tkinter as tk
 from tkinter import messagebox
 
+with open(r"settings\config.json", 'r') as f:
+    config = load(f)
+print(config)
+
 root = tk.Tk()
 root.withdraw()
 
@@ -104,7 +108,7 @@ def handle_file_export():
     print(f"Copied {len(out)} chars to clipboard!")
 
     update_autonomous_routine(
-        r"C:\Users\ethan\Documents\vex-vscode-projects\80550F_high_stakes\src\comp.py",
+        config['prod_filepath'],
         file_manager.base_name[:-9],
         out
     )
