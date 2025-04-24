@@ -13,6 +13,8 @@ class FileHandler:
         WAIT = 4
         PNEU = 5
         CUSTOM = 6
+        TURN = 7
+        DRIVE_FOR = 8
     
     def __init__(self):
         self.file_path: None | str
@@ -155,8 +157,31 @@ class FileHandler:
                                if not function.custom_args[item]['value'][1] == function.format['arguments'][item]['value'][1]]), 
                         function.curve.get_points()]
             elif isinstance(function, SequenceTurnFor):
-                pass
+                args = []
+                if "direction" in function.custom_args:
+                    args.append(function.custom_args['direction']['value'][1])
+                if "angle" in function.custom_args:
+                    args.append(function.custom_args['angle']['value'][1])
+                if "velocity" in function.custom_args:
+                    args.append(function.custom_args['velocity']['value'][1])
+                if "wait" in function.custom_args:
+                    args.append(function.custom_args['wait']['value'][1])
+                
+                if len(args) < 3 or (len(args) < 4 and 'wait' in function.custom_args):
+                    print(f"Export FATAL: Turn event does not have correct arguments (Sequence index {i})")
+                    error = True
+                    item = None
+                else:
+                    item = [
+                        FileHandler.ID.TURN,
+                        args
+                    ]
             elif isinstance(function, SequenceInitialPose):
+                args = []
+                #[[7,{
+                # 'direction':{'value':[<class'str'>,'RIGHT'],'valid_types':['RIGHT','LEFT']},
+                # 'angle':{'value':[<class'int'>,90]},'velocity':{'value':[<class'int'>,80]}}]]
+                    
                 item = [
                     FileHandler.ID.POSE,
                     {
@@ -164,6 +189,7 @@ class FileHandler:
                         "angle": function.a
                     }
                 ]
+                
             elif isinstance(function, SequenceSleepFor):
                 if function.t == 0:
                     print(f"Export WARN: Sleep has time 0 (Sequence index {i})")

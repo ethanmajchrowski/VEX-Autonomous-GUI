@@ -6,12 +6,20 @@
 - [x] 5 If we remove or add arguments to the point where there are no arguments in the list, the add button does not update (disappear/appear)
 - [x] 6 When selecting a motor object then a pneumatic object the pneumatic dropdown is not properly hidden
   - [x] ![alt text](image.png)
-- [ ] turnFor and driveFor are probably completely broekn
+- [ ] driveFor is probably completely broekn
 - [ ] removing item from sequence does not update displayed list
+- [ ] renaming sequence items causes big lag
+- [x] grabbing an event to drag sometimes jumps the wrong event to cursor
+  - [x] <video controls src="20250422-0119-19.8835308.mp4" title="Title"></video>
+- [x] dragging event pos doesn't mark file as unsaved
+- [ ] keep an eye out -- sequence not updating and hiding things, possibly after save/load?
+- [ ] modifying sequence list (order of elements, names) causes huge lag spike
 *TODO*
 - [x] finish saving and loading
 - [x] when opening program try to open last edited file
 - [x] file --> new resets sequence and filepath
+- [ ] when we have a sequence object selected, add new items immediately after the selected one instead of at the end and select the new object
+- [ ] when moving objects up and down, make sure they get re-selected in the pygame_gui list so that the item is highlighted properly
 *WANT TO DO*
 - [ ] Robot simulation with timing
 - [ ] Robot simulation path results

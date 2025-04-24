@@ -553,6 +553,8 @@ class UIManager:
 
         for i, item in enumerate(self.selected_item.properties):
             data = self.selected_item.properties[item] # [obj, name, value]
+            if data == "":
+                continue
             if data[0] == "list":
                 # list item, show a small panel with scrollable options
                 if data[2] == None:

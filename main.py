@@ -9,6 +9,7 @@ from module.gui import UIManager
 import module.undo as undo
 from module.sequence import *
 from module.file import FileHandler
+from copy_into_prod import update_autonomous_routine
 
 from simulation.pure_pursuit import PurePursuitSimulation
 
@@ -101,6 +102,13 @@ def handle_file_export():
     out = str(file_manager.export_lossy(sequence)).replace(" ", "")
     copy(out)
     print(f"Copied {len(out)} chars to clipboard!")
+
+    update_autonomous_routine(
+        r"C:\Users\ethan\Documents\vex-vscode-projects\80550F_high_stakes\src\comp.py",
+        file_manager.base_name[:-9],
+        out
+    )
+
     hide_dropdown()
     pg.display.set_caption(f"AGUI | Editing {file_manager.base_name}")
     global unsaved
@@ -510,8 +518,12 @@ while running:
                         new_pos = selected_curve.control_points[selected_point[0]][selected_point[1]]
                         if undo_manager.history[-1].pos_before == new_pos:
                             undo_manager.history.pop()
+                        else:
+                            unsaved = True
+                        
                 elif dragging_event:
                     dragging_event = False
+                    unsaved = True
                 elif type(selected_item) == SequencePath:
                     if not hovering_on_point and map_interaction:
                         # if we are clicking on the map panel
@@ -521,6 +533,7 @@ while running:
                                 # add a curve to the selected curve
                                 selected_item.curve.add_curve(mouse_pos)
                                 undo_manager.add_event(undo.point.PointAdd(selected_item.curve))
+                                unsaved = True
                                 # ui_manager.refresh_sequence(sequence)
             
         if event.type == MOUSEBUTTONDOWN:
@@ -607,7 +620,7 @@ while running:
 
         new_pos = screen_to_world([x, y], zoom, offset)
         new_pos = [int(new_pos[0]), int(new_pos[1])]
-        selected_item.events[i]['pos'] = new_pos
+        selected_item.events[selected_event]['pos'] = new_pos
         
     if dragging_map:
         offset_x += rel_x

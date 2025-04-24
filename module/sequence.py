@@ -103,6 +103,10 @@ class SequenceTurnFor(SequenceType):
     def __init__(self, name: str = "TurnFor"):
         super().__init__(name)
         self.symbol = "T"
+        self.format = load_format(r"settings\output\turn.json")
+        self.custom_args["direction"] = deepcopy(self.format["arguments"]["direction"])
+        self.custom_args["angle"] = deepcopy(self.format["arguments"]["angle"])
+        self.custom_args["velocity"] = deepcopy(self.format["arguments"]["velocity"])
 
 class SequenceDriveFor(SequenceType):
     def __init__(self, name: str = "DriveFor"):
