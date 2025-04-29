@@ -222,9 +222,9 @@ class UIManager:
             view_dropdown = pygame_gui.elements.UIButton(manager=self.manager,
                 relative_rect=pg.Rect(0, 0, -1, -1),
                 text="View", container=self.panel.left_panel, anchors={"left_target": file_dropdown})
-            run_dropdown = pygame_gui.elements.UIButton(manager=self.manager,
+            flip_button = pygame_gui.elements.UIButton(manager=self.manager,
                 relative_rect=pg.Rect(0, 0, -1, -1),
-                text="Run", container=self.panel.left_panel, anchors={"left_target": view_dropdown})
+                text="Flip", container=self.panel.left_panel, anchors={"left_target": view_dropdown})
             
             sequence_add_button = pygame_gui.elements.UIButton(manager=self.manager,
                 relative_rect=pg.Rect(0, 0, self.rect.LEFT_PANEL_RECT.w//4, 40),

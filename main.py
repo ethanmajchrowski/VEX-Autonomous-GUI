@@ -341,6 +341,38 @@ while running:
                             unsaved = True
                 ui_manager.update_events_list()
                 ui_manager.panel.event_add_popup.hide()
+            
+            if event.ui_element == ui_manager.element.flip_button:
+                selected_item = None
+                ui_manager.changed_selection(selected_item)
+                file_manager.file_path = None
+                unsaved = True
+
+                for item in sequence:
+                    if type(item) == SequencePath:
+                        for curve in item.curve.curves:
+                            for point, handle in curve.control_points:
+                                point[0] *= -1
+                                handle[0] *= -1
+                        for point in item.curve.overlap_points:
+                           point[0] *= -1
+                        item.curve.update_all_curves()
+                    elif type(item) == SequenceTurnFor:
+                        if item.custom_args["direction"]['value'][1] == "RIGHT":
+                            item.custom_args["direction"]['value'][1] = "LEFT"
+                        elif item.custom_args["direction"]['value'][1] == "LEFT":
+                            item.custom_args["direction"]['value'][1] = "RIGHT"
+                    elif type(item) == SequenceInitialPose:
+                        a = item.a
+                        a *= -1
+                        a %= 360
+                        item.properties["theta"][3] = a
+                        item.a = a
+                    elif type(item) == SequenceSetPneumatic:
+                        if item.properties['pneumatic'] == 'doinker':
+                            item.properties['pneumatic'] = 'doinkerLeft'
+                        elif item.properties['pneumatic'] == 'doinkerLeft':
+                            item.properties['pneumatic'] = 'doinker'
 
         # changed argument
         if event.type == UI_TEXT_ENTRY_CHANGED:
