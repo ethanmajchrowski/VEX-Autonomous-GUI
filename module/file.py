@@ -78,8 +78,7 @@ class FileHandler:
             if isinstance(function, SequenceDriveFor):
                 pass
             elif isinstance(function, SequenceFlag):
-                args = tuple([(item, function.custom_args[item]['value'][1]) for item in function.custom_args
-                               if not function.custom_args[item]['value'][1] == function.format['arguments'][item]['value'][1]])
+                args = tuple([(item, function.custom_args[item]['value'][1]) for item in function.custom_args])
                 if args:
                     item = [
                         FileHandler.ID.FLAG,
