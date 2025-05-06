@@ -206,9 +206,21 @@ while running:
                 if type(function) == SequencePath:
                     num_curves += 1
                     function.properties["name"] = f"Path {num_curves}"
+
+                insert = False
+                if selected_item is not None:
+                    index = sequence.index(selected_item)
+                    if index < len(sequence)-1:
+                        sequence.insert(index+1, function)
+                        insert = True
+                    else:
+                        sequence.append(function)
+                else:
+                    sequence.append(function)
                 
-                sequence.append(function)
                 ui_manager.add_sequence_item(function)
+                if insert:
+                    ui_manager.refresh_sequence(sequence)
                 unsaved = True
             
             # add argument
