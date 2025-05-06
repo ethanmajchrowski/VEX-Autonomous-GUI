@@ -167,5 +167,11 @@ class ComplexCurve:
         for point in points:
             if point not in nd:
                 nd.append(point)
+        
+        l = []
+        for i in range(len(nd)):
+            if i+1 < len(nd):
+                if dist(nd[i], nd[i+1]) > 5:
+                    l.append(nd[i])
 
-        return nd
+        return l

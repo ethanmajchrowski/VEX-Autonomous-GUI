@@ -340,9 +340,7 @@ class UIManager:
         Arguments:
             sequence: sequence list of commands
         """
-        self.element.sequence_list.set_item_list([])
-        for item in sequence:
-            self.element.sequence_list.add_items([f"[{item.symbol}] {item.properties["name"]}"])
+        self.element.sequence_list.set_item_list([f"[{item.symbol}] {item.properties["name"]}" for item in sequence])
     
     def add_sequence_item(self, item: SequenceType) -> None:
         """Adds sequence element with correct format to sequence"""

@@ -23,6 +23,10 @@
         "allow_intake_input": true,
         "elevating": false,
         "wall_setpoint": 1,
-        "disable_drive": false
+        "disable_drive": false,
+        "intake_flex_extake_on_ring": {
+            "default": 0,
+            "valid_types": [0, 1, 2]
+        }
     }
 }
