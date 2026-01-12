@@ -1,15 +1,15 @@
 **VEX Autonomous GUI**
-#Overview
+# Overview
 This project is a graphical tool designed to simplify the development and iteration of autonomous routines for VEX robotics. It was created to address a recurring pain point in our workflow: autonomous code was difficult to visualize, modify, and debug when written entirely by hand.
 
 The GUI provides a structured way to build, edit, and reorder autonomous “events,” making it faster and less error-prone to develop complex autonomous sequences during competition preparation.
 
-#Motivation
+# Motivation
 Developing autonomous routines directly in code made rapid iteration difficult, especially when testing different strategies or tuning parameters with limited time.
 
 This tool was built as a practical solution to that problem: a way to abstract autonomous actions into configurable events that could be assembled visually while still producing robot-readable output.
 
-#How it Works
+# How it Works
 * Autonomous sequences are composed of discrete events, defined as classes in module/sequence.py.
 * Each event exposes its configurable arguments via JSON definitions located in settings/output/ (to support easy configurations for different robot codebases).
 * The GUI dynamically interprets these definitions, allowing event parameters to be added, modified, and reordered interactively.
