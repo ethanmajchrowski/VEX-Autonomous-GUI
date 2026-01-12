@@ -21,4 +21,3 @@ In practice, this tool significantly reduced the time required to create and adj
 
 # GUI Screenshot
 ![image](https://github.com/user-attachments/assets/a4841e62-55d8-41e8-83c2-6da55ecfb57b)
-requirements.txt does not exist right now but ill get around to it
